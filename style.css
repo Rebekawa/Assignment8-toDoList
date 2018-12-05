@@ -1,3 +1,46 @@
 body {
-    background: thistle;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.header{
+    height: 60px;
+    width: 100%;
+    background-color: royalblue;
+}
+.container{
+    display: flex;
+}
+.sideBar{
+    height: 600px;
+    width:20%;
+}
+
+.content{
+    height: 600px;
+    width: 80%;
+    
+    background-image: url('http://fonds.toutimages.com/fo_bleuclair/bleucla_400.jpg')
+}
+
+#inputActivity{
+    width: 600px;
+    height: 40px;
+    border-radius: 50px;
+    margin: 20px;
+    
+}
+
+.select-items{
+   margin-left: 250px;
+   margin-right: 20px;
+}
+
+.divList{
+    padding: 10px;
+    background-color: whitesmoke;
+    border-radius: 50px;
+    margin: 5px;
+
 }
