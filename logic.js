@@ -5,7 +5,7 @@ window.date_utils = {
     years: Array.from({ length: 30 }, (v, k) => k + 2018)
 };
 
-date_utils.parseDate = function(day, month, year){
+date_utils.parseDate = function (day, month, year) {
     var month = date_utils.months.indexOf(month) + 1;
     var year = year.substring(2);
     var date = `${day}.${month}.${year}`;
@@ -14,12 +14,12 @@ date_utils.parseDate = function(day, month, year){
 
 window.Activity = {};
 
-var isWinter = function(month){
+var isWinter = function (month) {
     var month = date_utils.months.indexOf(month);
     return month >= 0 && month < 3 || month === 11;
 }
 
-Activity.getActivityMessage = function(month){
+Activity.getActivityMessage = function (month) {
     return isWinter(month) ? "if it is not too cold" : "";
 }
 
@@ -29,34 +29,25 @@ class App extends React.Component {
         return (
             <div>
                 <Header />
-                <div className='container'>
-                    <SideBar />
-                    <Content />
-                </div>
+
+                <Content />
+
             </div>
-       )};
+        )
+    };
 
 }
 
 class Header extends React.Component {
-    render(){
-        return(
+    render() {
+        return (
             <h1 className='header'>My ToDo List <img className='logoImage' src='https://image.flaticon.com/icons/svg/590/590510.svg' /></h1>
 
-        )};
-   
+        )
+    };
+
 }
 
-class SideBar extends React.Component {
-    render(){
-        return(
-            <div className='sideBar'>
-
-            </div>
-            
-            )};
-   
-}
 
 class Content extends React.Component {
     constructor(props) {
@@ -79,7 +70,7 @@ class Content extends React.Component {
         this.setState({ activities: this.state.activities });
     }
 
-    renderOptions(arr){
+    renderOptions(arr) {
         return arr.map(x => <option key={x} value={x}>{x}</option>);
     }
 
@@ -87,23 +78,23 @@ class Content extends React.Component {
         return (
             <div className='content'>
                 <form onSubmit={this.handleSubmit}>
-                    <input id='inputActivity'ref={input => this.name = input} placeholder="my new activity"></input>
+                    <input id='inputActivity' ref={input => this.name = input} placeholder="my new activity"></input>
                     <span className='select-items'>
-                    <select ref={x => this.day = x}>
-                        {this.renderOptions(date_utils.days)}
-                    </select>
-                    <select ref={x => this.month = x}>
-                        {this.renderOptions(date_utils.months)}
-                    </select>
-                    <select ref={x => this.year = x}>
-                        {this.renderOptions(date_utils.years)}
-                    </select>
+                        <select ref={x => this.day = x}>
+                            {this.renderOptions(date_utils.days)}
+                        </select>
+                        <select ref={x => this.month = x}>
+                            {this.renderOptions(date_utils.months)}
+                        </select>
+                        <select ref={x => this.year = x}>
+                            {this.renderOptions(date_utils.years)}
+                        </select>
                     </span>
                     <input type="submit" value="add"></input>
                 </form>
                 <List activities={this.state.activities} />
                 <Done />
-            
+
             </div>
         );
     }
@@ -113,10 +104,10 @@ class List extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            items: []
+
         }
     }
-    
+
 
     generateActivityString(activity) {
         var date = date_utils.parseDate(activity.day, activity.month, activity.year);
@@ -127,60 +118,66 @@ class List extends React.Component {
     render() {
         return (
             <ul>
-
-                {this.props.activities.map((activity, i) => <Item i={i}  text={this.generateActivityString(activity)}/>)}
+                {this.props.activities.map((activity, i) => <Item i={i} text={this.generateActivityString(activity)} />)}
             </ul>
         );
     }
 }
 
-class Item extends React.Component{
-    constructor(props){
+class Item extends React.Component {
+    constructor(props) {
         super(props)
         this.state = {
             check: false
         }
-        this.changePosition=this.changePosition.bind(this);
+        this.changePosition = this.changePosition.bind(this);
+        this.trash = this.trash.bind(this)
     }
-    changePosition(e){
+    changePosition(e) {
         this.setState({
-            check:e.target.checked
+            check: e.target.checked
         })
 
     }
-    render(){
-            var newClass = this.state.check? 'press' : ''
-            return(
-                    <div className={`divList ${newClass}`} key={this.props.i}><input onChange={this.changePosition} type='checkbox'>{this.props.text}</input></div>
-                
-            );
-        }
-    }
 
-class Done extends React.Component{
-    constructor(props){
+    trash(e){
+        e.target.parentElement.remove();
+    }
+    render() {
+        var newClass = this.state.check ? 'press' : ''
+        return (
+            <div className={`divList ${newClass}`} key={this.props.i}><input onChange={this.changePosition} type='checkbox'>{this.props.text}
+                <img  onClick={this.trash} className='trashLogo' src='https://image.flaticon.com/icons/svg/126/126468.svg' />
+            </input></div>
+
+        );
+    }
+}
+
+class Done extends React.Component {
+    constructor(props) {
         super(props)
-        this.state ={
-            items:[],
+        this.state = {
+            items: [],
             display: 'none'
         }
 
         this.showDone = this.showDone.bind(this)
     }
 
-    showDone(){
+    showDone() {
         console.log('show');
         this.setState({
-            display:'block'
+            display: 'block'
         })
     }
 
 
-    render(){
-        return(
+    render() {
+        return (
             <div>
                 <button className='doneButton' onClick={this.showDone}> Done </button>
-                <div style={{display:this.state.display}}>{this.state.items}</div>
+                <div style={{ display: this.state.display }}>{this.state.items}</div>
             </div>
 
         );
