@@ -1,37 +1,9 @@
-window.date_utils = {
-    months: ["January", "February", "March", "April", "May", "June", "July",
-        "August", "September", "October", "November", "December"],
-    days: Array.from({ length: 31 }, (v, k) => k + 1),
-    years: Array.from({ length: 30 }, (v, k) => k + 2018)
-};
-
-date_utils.parseDate = function (day, month, year) {
-    var month = date_utils.months.indexOf(month) + 1;
-    var year = year.substring(2);
-    var date = `${day}.${month}.${year}`;
-    return date;
-}
-
-window.Activity = {};
-
-var isWinter = function (month) {
-    var month = date_utils.months.indexOf(month);
-    return month >= 0 && month < 3 || month === 11;
-}
-
-Activity.getActivityMessage = function (month) {
-    return isWinter(month) ? "if it is not too cold" : "";
-}
-
-
 class App extends React.Component {
     render() {
         return (
             <div>
                 <Header />
-
-                <Content />
-
+                <List />
             </div>
         )
     };
@@ -42,147 +14,86 @@ class Header extends React.Component {
     render() {
         return (
             <h1 className='header'>My ToDo List <img className='logoImage' src='https://image.flaticon.com/icons/svg/590/590510.svg' /></h1>
-
         )
     };
 
 }
 
 
-class Content extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            activities: []
-        };
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleSubmit(event) {
-        event.preventDefault();
-        var new_activity = {
-            name: this.name.value,
-            day: this.day.value,
-            month: this.month.value,
-            year: this.year.value
-        };
-        this.state.activities.push(new_activity);
-        this.setState({ activities: this.state.activities });
-    }
-
-    renderOptions(arr) {
-        return arr.map(x => <option key={x} value={x}>{x}</option>);
-    }
-
-    render() {
-        return (
-            <div className='content'>
-                <form onSubmit={this.handleSubmit}>
-                    <input id='inputActivity' ref={input => this.name = input} placeholder="my new activity"></input>
-                    <span className='select-items'>
-                        <select ref={x => this.day = x}>
-                            {this.renderOptions(date_utils.days)}
-                        </select>
-                        <select ref={x => this.month = x}>
-                            {this.renderOptions(date_utils.months)}
-                        </select>
-                        <select ref={x => this.year = x}>
-                            {this.renderOptions(date_utils.years)}
-                        </select>
-                    </span>
-                    <input type="submit" value="add"></input>
-                </form>
-                <List activities={this.state.activities} />
-                <Done />
-
-            </div>
-        );
-    }
-}
-
 class List extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
+    constructor() {
+        super()
+        this.newList = this.newList.bind(this),
+            this.doneList = this.doneList.bind(this),
+            this.trash = this.trash.bind(this),
+            this.showDone = this.showDone.bind(this),
+            this.state = {
+                arr: [],
+                done: [],
+                key: 0,
+                check: false,
+                display: 'none'
+            }
+    }
 
+
+    newList(e) {
+        if (e.charCode == 13) {
+            this.setState({
+                key: this.state.key + 1
+            })
+            this.state.arr.push(<div className="divList" key={this.state.key}> <img onClick={this.doneList} src="https://image.flaticon.com/icons/svg/2/2276.svg" />{this.textInput.value} </div>)
         }
     }
 
-
-    generateActivityString(activity) {
-        var date = date_utils.parseDate(activity.day, activity.month, activity.year);
-        var new_activity = `${activity.name} on ${date} ${Activity.getActivityMessage(activity.month)}`;
-        return new_activity;
-    }
-
-    render() {
-        return (
-            <ul>
-                {this.props.activities.map((activity, i) => <Item i={i} text={this.generateActivityString(activity)} />)}
-            </ul>
-        );
-    }
-}
-
-class Item extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            check: false
-        }
-        this.changePosition = this.changePosition.bind(this);
-        this.trash = this.trash.bind(this)
-    }
-    changePosition(e) {
+    doneList(e) {
         this.setState({
-            check: e.target.checked
+            key: this.state.key + 1
         })
-
-    }
-
-    trash(e){
+        var task = e.target.parentElement.textContent;
         e.target.parentElement.remove();
-    }
-    render() {
-        var newClass = this.state.check ? 'press' : ''
-        return (
-            <div className={`divList ${newClass}`} key={this.props.i}><input onChange={this.changePosition} type='checkbox'>{this.props.text}
-                <img  onClick={this.trash} className='trashLogo' src='https://image.flaticon.com/icons/svg/126/126468.svg' />
-            </input></div>
-
-        );
-    }
-}
-
-class Done extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            items: [],
-            display: 'none'
+        var task_arr = this.state.arr;
+        for (var i = 0; i < task_arr.length; i++) {
+            if (task === task_arr[i].props.children[2]) {
+                task_arr.splice(i, 1);
+            }
         }
+        var done_arr = this.state.done;
+        done_arr.push(<div className="divList press" key={this.state.key + 1}> <img onClick={this.passToDo} onChange={this.changeClassName} id="unchecked" src="https://image.flaticon.com/icons/svg/25/25643.svg" />{task}  <img className="trashLogo" onClick={this.trash} src="https://image.flaticon.com/icons/svg/126/126468.svg" /> {this.task}</div>)
 
-        this.showDone = this.showDone.bind(this)
+        this.setState({
+            arr: task_arr,
+            done: done_arr
+        })
+    }
+
+    trash(e) {
+        e.target.parentElement.remove();
     }
 
     showDone() {
-        console.log('show');
+        var newDisplay = this.state.display == 'none' ? 'block' : 'none'
         this.setState({
-            display: 'block'
+            display: newDisplay
         })
     }
 
-
     render() {
+
         return (
-            <div>
-                <button className='doneButton' onClick={this.showDone}> Done </button>
-                <div style={{ display: this.state.display }}>{this.state.items}</div>
+
+            <div className="container">
+                <input ref={(text) => { this.textInput = text; }} onKeyPress={this.newList} id='inputActivity' type="text" placeholder="Add a new activity" />
+                <span >{this.state.arr} </span>
+
+                <div><button className="doneButton" onClick={this.showDone} ><h3>Done</h3></button></div>
+                <div style={{ display: this.state.display }} >
+                    {this.state.done}
+
+                </div>
             </div>
-
-        );
+        )
     }
-
 }
 
 
