@@ -5,20 +5,29 @@ body {
 }
 
 .header{
-    height: 60px;
+    height: 10%;
     width: 100%;
     background-color: royalblue;
+    color: white;
+    padding: 10px;
+    line-height: 2;
+    text-align: center;
+    margin: 0;
+}
+
+.logoImage{
+    width: 25px;
 }
 .container{
     display: flex;
 }
 .sideBar{
-    height: 600px;
+    height: 100%;
     width:20%;
 }
 
 .content{
-    height: 600px;
+    
     width: 80%;
     
     background-image: url('http://fonds.toutimages.com/fo_bleuclair/bleucla_400.jpg')
@@ -43,4 +52,21 @@ body {
     border-radius: 50px;
     margin: 5px;
 
+}
+
+.press {
+    border: 1px solid rgb(117, 116, 116);
+    color: gray;
+    background-color: rgb(224, 220, 220);
+}
+
+.doneButton{
+    width: 600px;
+    height: 40px;
+    border-radius: 50px;
+    margin: 20px;
+    background-color: white;
+    vertical-align: middle;
+    text-align: center;
+    box-shadow: 2px 3px  rgb(226, 225, 225);
 }

@@ -41,9 +41,7 @@ class App extends React.Component {
 class Header extends React.Component {
     render(){
         return(
-            <div className='header'>
-
-            </div>
+            <h1 className='header'>My ToDo List <img className='logoImage' src='https://image.flaticon.com/icons/svg/590/590510.svg' /></h1>
 
         )};
    
@@ -104,6 +102,8 @@ class Content extends React.Component {
                     <input type="submit" value="add"></input>
                 </form>
                 <List activities={this.state.activities} />
+                <Done />
+            
             </div>
         );
     }
@@ -112,6 +112,9 @@ class Content extends React.Component {
 class List extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            items: []
+        }
     }
     
 
@@ -125,10 +128,64 @@ class List extends React.Component {
         return (
             <ul>
 
-                {this.props.activities.map((activity, i) => <div className='divList' key={i}><input type='checkbox'>{this.generateActivityString(activity)}</input></div>)}
+                {this.props.activities.map((activity, i) => <Item i={i}  text={this.generateActivityString(activity)}/>)}
             </ul>
         );
     }
+}
+
+class Item extends React.Component{
+    constructor(props){
+        super(props)
+        this.state = {
+            check: false
+        }
+        this.changePosition=this.changePosition.bind(this);
+    }
+    changePosition(e){
+        this.setState({
+            check:e.target.checked
+        })
+
+    }
+    render(){
+            var newClass = this.state.check? 'press' : ''
+            return(
+                    <div className={`divList ${newClass}`} key={this.props.i}><input onChange={this.changePosition} type='checkbox'>{this.props.text}</input></div>
+                
+            );
+        }
+    }
+
+class Done extends React.Component{
+    constructor(props){
+        super(props)
+        this.state ={
+            items:[],
+            display: 'none'
+        }
+
+        this.showDone = this.showDone.bind(this)
+    }
+
+    showDone(){
+        console.log('show');
+        this.setState({
+            display:'block'
+        })
+    }
+
+
+    render(){
+        return(
+            <div>
+                <button className='doneButton' onClick={this.showDone}> Done </button>
+                <div style={{display:this.state.display}}>{this.state.items}</div>
+            </div>
+
+        );
+    }
+
 }
 
 
